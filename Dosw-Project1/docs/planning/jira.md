@@ -1,5 +1,5 @@
 # 📄 Planeación del Sistema en Jira
-
+(aca debo poner fotos del trabajo en Jira)
 ## Desglose de trabajo: Épicas, Historias de Usuario y Tareas
 
 La implementación de los requerimientos identificados de Bankify se desglosa de la siguiente manera:
