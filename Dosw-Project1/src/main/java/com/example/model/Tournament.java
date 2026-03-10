@@ -1,6 +1,6 @@
-package com.example.model;
+package java.com.example.model;
 
-import com.example.model.enums.TournamentStatus;
+import java.com.example.model.enums.TournamentStatus;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

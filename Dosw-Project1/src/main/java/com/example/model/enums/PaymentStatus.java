@@ -1,4 +1,4 @@
-package com.example.model.enums;
+package java.com.example.model.enums;
 
 public enum PaymentStatus {
     PENDING,

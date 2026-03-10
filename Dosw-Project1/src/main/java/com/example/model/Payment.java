@@ -1,6 +1,6 @@
-package com.example.model;
+package java.com.example.model;
 
-import com.example.model.enums.PaymentStatus;
+import java.com.example.model.enums.PaymentStatus;
 
 import java.time.LocalDate;
 

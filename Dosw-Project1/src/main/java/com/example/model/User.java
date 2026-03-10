@@ -1,7 +1,7 @@
-package com.example.model;
+package java.com.example.model;
 
-import com.example.model.enums.ParticipantType;
-import com.example.model.enums.Role;
+import java.com.example.model.enums.ParticipantType;
+import java.com.example.model.enums.Role;
 
 public class User {
 
