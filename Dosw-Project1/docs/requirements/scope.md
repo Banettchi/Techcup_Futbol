@@ -13,7 +13,7 @@ Actualmente, el torneo semestral de fútbol de los programas de ingeniería de l
 
 ### 3.1 Diagrama
 
-*Relacionar imagen del diagrama de contexto realizado*
+*imagen del diagrama de contexto*
 
 ### 3.2 Actores
 
