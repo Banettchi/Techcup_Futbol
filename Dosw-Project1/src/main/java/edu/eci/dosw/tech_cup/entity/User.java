@@ -51,6 +51,7 @@ public class User {
     @JoinColumn(name = "team_id")
     private Team team;
 
+
     public User() {
     }
 
