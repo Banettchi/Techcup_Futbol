@@ -31,28 +31,27 @@ public class UserController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener usuario por ID")
     public ResponseEntity<UserModel> getById(@PathVariable Long id) {
-        UserModel user = userService.findById(id);
-        if (user != null) {
-            return ResponseEntity.ok(user);
+        try {
+            return ResponseEntity.ok(userService.findById(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @PostMapping
     @Operation(summary = "Crear usuario", description = "Se crea con rol PLAYER por defecto")
     public ResponseEntity<UserModel> create(@RequestBody UserModel user) {
-        UserModel created = userService.create(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(user));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar usuario")
     public ResponseEntity<UserModel> update(@PathVariable Long id, @RequestBody UserModel user) {
-        UserModel updated = userService.update(id, user);
-        if (updated != null) {
-            return ResponseEntity.ok(updated);
+        try {
+            return ResponseEntity.ok(userService.update(id, user));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @PutMapping("/{id}/role")
@@ -63,20 +62,10 @@ public class UserController {
         if (requesterRole != Role.ADMIN) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        UserModel updated = userService.assignRole(id, role);
-        if (updated != null) {
-            return ResponseEntity.ok(updated);
+        try {
+            return ResponseEntity.ok(userService.assignRole(id, role));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
-    @PutMapping("/{id}/deactivate")
-    @Operation(summary = "Inactivar usuario")
-    public ResponseEntity<UserModel> deactivate(@PathVariable Long id) {
-        UserModel updated = userService.deactivate(id);
-        if (updated != null) {
-            return ResponseEntity.ok(updated);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

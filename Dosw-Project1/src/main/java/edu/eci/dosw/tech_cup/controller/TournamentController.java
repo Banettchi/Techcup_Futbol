@@ -1,7 +1,6 @@
 package edu.eci.dosw.tech_cup.controller;
 
 import edu.eci.dosw.tech_cup.model.TournamentModel;
-import edu.eci.dosw.tech_cup.model.enums.TournamentStatus;
 import edu.eci.dosw.tech_cup.service.TournamentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,54 +30,44 @@ public class TournamentController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener torneo por ID")
     public ResponseEntity<TournamentModel> getById(@PathVariable Long id) {
-        TournamentModel tournament = tournamentService.findById(id);
-        if (tournament != null) {
-            return ResponseEntity.ok(tournament);
+        try {
+            return ResponseEntity.ok(tournamentService.findById(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @PostMapping
     @Operation(summary = "Crear torneo", description = "Se crea en estado DRAFT por defecto")
     public ResponseEntity<TournamentModel> create(@RequestBody TournamentModel tournament) {
-        TournamentModel created = tournamentService.create(tournament);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(tournamentService.create(tournament));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar torneo", description = "No aplica si está FINISHED")
     public ResponseEntity<Object> update(@PathVariable Long id,
                                          @RequestBody TournamentModel tournament) {
-        TournamentModel existing = tournamentService.findById(id);
-        if (existing == null) {
+        try {
+            return ResponseEntity.ok(tournamentService.update(id, tournament));
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("No se puede modificar")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        if (existing.getStatus() == TournamentStatus.FINISHED) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("No se puede modificar un torneo finalizado");
-        }
-        TournamentModel updated = tournamentService.update(id, tournament);
-        if (updated != null) {
-            return ResponseEntity.ok(updated);
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar torneo", description = "Solo si está en estado DRAFT")
     public ResponseEntity<Object> delete(@PathVariable Long id) {
-        TournamentModel existing = tournamentService.findById(id);
-        if (existing == null) {
+        try {
+            tournamentService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("DRAFT")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        if (existing.getStatus() != TournamentStatus.DRAFT) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Solo se pueden eliminar torneos en estado DRAFT");
-        }
-        boolean deleted = tournamentService.delete(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }
