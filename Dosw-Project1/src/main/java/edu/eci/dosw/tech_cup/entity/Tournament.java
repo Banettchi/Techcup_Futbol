@@ -1,4 +1,4 @@
-package edu.eci.dosw.tech_cup.model;
+package edu.eci.dosw.tech_cup.entity;
 
 import edu.eci.dosw.tech_cup.model.enums.TournamentStatus;
 
