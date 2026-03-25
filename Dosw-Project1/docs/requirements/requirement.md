@@ -1,9 +1,5 @@
 # 📄 Requerimientos del Sistema
 
-## 1. Lista general de requerimientos
-
-El sistema de TECHCUP FÚTBOL tiene los siguientes requerimientos (descripción a alto nivel):
-
 ### 1.1 Requerimientos funcionales
 
 El sistema de TECHCUP FÚTBOL debe tener la capacidad de:
