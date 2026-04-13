@@ -4,7 +4,7 @@ import edu.eci.dosw.tech_cup.entity.User;
 import edu.eci.dosw.tech_cup.model.UserModel;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {RoleMapper.class})
 public interface UserMapper {
 
     User toEntity(UserModel model);
