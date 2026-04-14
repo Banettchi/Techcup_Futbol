@@ -5,6 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +20,8 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Autowired
     private JwtService jwtService;
@@ -48,15 +52,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 1. Validar si existe el header
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.debug("Petición sin token JWT: {} {}", request.getMethod(), request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
 
         // 2. Extraer token
         String token = authHeader.substring(7);
+        log.debug("Token JWT recibido para: {} {}", request.getMethod(), request.getRequestURI());
 
         // 3. Extraer username
         String username = jwtService.extractUsername(token);
+        log.debug("Username extraído del token: {}", username);
 
         // 4. Validar si no está autenticado aún
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -73,6 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // 5. Registrar usuario como autenticado
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                log.info("Usuario '{}' autenticado exitosamente via JWT para: {} {}", username, request.getMethod(), request.getRequestURI());
             }
         }
 

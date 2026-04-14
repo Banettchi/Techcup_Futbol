@@ -6,6 +6,8 @@ import edu.eci.dosw.tech_cup.model.UserModel;
 import edu.eci.dosw.tech_cup.model.enums.Role;
 import edu.eci.dosw.tech_cup.repository.RoleRepository;
 import edu.eci.dosw.tech_cup.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -44,9 +48,13 @@ public class UserService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        log.debug("Buscando usuario por email: {}", email);
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
-
+                .orElseThrow(() -> {
+                    log.warn("Usuario no encontrado con email: {}", email);
+                    return new UsernameNotFoundException("Usuario no encontrado: " + email);
+                });
+        log.info("Usuario encontrado: {} con rol: {}", email, user.getRole());
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
@@ -55,45 +63,73 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserModel> findAll() {
-        return userRepository.findAll()
+        log.info("Consultando todos los usuarios");
+        List<UserModel> users = userRepository.findAll()
                 .stream()
                 .map(userMapper::toModel)
                 .collect(Collectors.toList());
+        log.info("Se encontraron {} usuarios", users.size());
+        return users;
     }
 
     public UserModel findById(Long id) {
+        log.debug("Buscando usuario con ID: {}", id);
         return userMapper.toModel(
                 userRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
+                        .orElseThrow(() -> {
+                            log.error("Usuario con ID {} no encontrado", id);
+                            return new RuntimeException("Usuario no encontrado");
+                        }));
     }
 
     public UserModel create(UserModel user) {
+        log.info("Creando nuevo usuario con email: {}", user.getEmail());
         user.setRole(Role.PLAYER);
         user.setAvailable(true);
-        return userMapper.toModel(userRepository.save(userMapper.toEntity(user)));
+        UserModel created = userMapper.toModel(userRepository.save(userMapper.toEntity(user)));
+        log.info("Usuario creado exitosamente con ID: {} y rol: PLAYER", created.getId());
+        return created;
     }
 
     public UserModel update(Long id, UserModel updated) {
+        log.info("Actualizando usuario con ID: {}", id);
         userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> {
+                    log.error("No se puede actualizar: usuario con ID {} no existe", id);
+                    return new RuntimeException("Usuario no encontrado");
+                });
         updated.setId(id);
-        return userMapper.toModel(userRepository.save(userMapper.toEntity(updated)));
+        UserModel result = userMapper.toModel(userRepository.save(userMapper.toEntity(updated)));
+        log.info("Usuario con ID {} actualizado exitosamente", id);
+        return result;
     }
 
 
     public UserModel assignRole(Long id, Role role) {
+        log.info("Asignando rol {} al usuario con ID: {}", role, id);
         UserModel user = findById(id);
         user.setRole(role);
-        return userMapper.toModel(userRepository.save(userMapper.toEntity(user)));
+        UserModel result = userMapper.toModel(userRepository.save(userMapper.toEntity(user)));
+        log.info("Rol {} asignado exitosamente al usuario con ID: {}", role, id);
+        return result;
     }
 
 
     public UserModel assignRoleEntity(Long userId, Long roleId) {
+        log.info("Asignando rol entity (roleId={}) al usuario con ID: {}", roleId, userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> {
+                    log.error("Usuario con ID {} no encontrado para asignar rol", userId);
+                    return new RuntimeException("Usuario no encontrado");
+                });
         edu.eci.dosw.tech_cup.entity.Role role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> {
+                    log.error("Rol con ID {} no encontrado", roleId);
+                    return new RuntimeException("Rol no encontrado");
+                });
         user.getRoles().add(role);
-        return userMapper.toModel(userRepository.save(user));
+        UserModel result = userMapper.toModel(userRepository.save(user));
+        log.info("Rol entity '{}' asignado al usuario ID: {} via ManyToMany", role.getName(), userId);
+        return result;
     }
 }
