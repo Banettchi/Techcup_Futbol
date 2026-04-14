@@ -1,31 +1,45 @@
 package edu.eci.dosw.tech_cup.controller;
-import edu.eci.dosw.tech_cup.dto.auth.AuthResponse;
-import edu.eci.dosw.tech_cup.dto.auth.LoginRequest;
-import edu.eci.dosw.tech_cup.service.AuthService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import edu.eci.dosw.tech_cup.model.AuthRequest;
+import edu.eci.dosw.tech_cup.model.AuthResponse;
+import edu.eci.dosw.tech_cup.service.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/auth")
-@Tag(name = "Autenticación", description = "Operaciones de autenticación")
+@RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    @Autowired
+    private AuthenticationManager authManager;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+    @Autowired
+    private JwtService jwtService;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    /**
+     * a. UsernamePasswordAuthenticationToken es una clase de Spring Security que
+     *    representa una solicitud de autenticación con usuario y contraseña.
+     *    Se usa para pasarle las credenciales al AuthenticationManager para que
+     *    las valide contra la base de datos.
+     */
     @PostMapping("/login")
-    @Operation(summary = "Login de usuario", description = "Autentica por correo y contraseña")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        AuthResponse response = authService.login(request);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    public AuthResponse login(@RequestBody AuthRequest request) {
+        authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+
+        UserDetails user = userDetailsService.loadUserByUsername(request.getUsername());
+        String token = jwtService.generateToken(user);
+        return new AuthResponse(token);
     }
 }
