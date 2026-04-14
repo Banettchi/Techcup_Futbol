@@ -1,14 +1,16 @@
 package edu.eci.dosw.tech_cup.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * a. @EnableWebSecurity es una anotación que activa la configuración de seguridad web
@@ -18,6 +20,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtFilter;
 
     /**
      * a. AuthenticationManager es la interfaz principal de Spring Security encargada
@@ -43,6 +48,17 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * i. http.csrf es la protección contra ataques Cross-Site Request Forgery.
+     *    Se deshabilita porque la API REST usa JWT para autenticación sin estado (stateless),
+     *    por lo que no necesita protección CSRF basada en sesiones.
+     *
+     * ii. Esa línea configura qué endpoints son públicos y cuáles requieren autenticación.
+     *     /auth/** es permitido para todos (login), y cualquier otro endpoint requiere estar autenticado.
+     *
+     * iii. Esa línea registra el filtro JWT antes del filtro de autenticación por usuario/contraseña,
+     *      para que cada petición sea validada con el token antes de cualquier otro proceso.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -51,7 +67,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
-                );
+                )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

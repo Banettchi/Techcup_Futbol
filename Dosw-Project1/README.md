@@ -334,3 +334,36 @@ Each feature was developed in isolation and merged via Pull Requests to `develop
 | `feature/mapstruct` | Entities, Models, and MapStruct mappers |
 | `feature/services` | Repositories, Services, and Controllers |
 | `feature/repository-tests` | JPA repository tests |
+
+## Laboratorio 9
+### Punto 5: Filtro JWT
+
+### a. ¿Qué es un filtro JWT?
+
+Un filtro JWT (JSON Web Token) es un componente dentro del backend que intercepta las peticiones HTTP para validar si el usuario está autenticado mediante un token JWT.
+
+Este filtro extrae el token desde el header `Authorization`, verifica su validez (firma, expiración e integridad) y decide si la solicitud puede continuar o debe ser rechazada.
+
+---
+
+### b. ¿Para qué sirven los filtros JWT?
+
+Los filtros JWT sirven para gestionar la autenticación y autorización en aplicaciones seguras. Sus principales funciones son:
+
+- Validar la identidad del usuario sin necesidad de sesiones en el servidor (stateless).
+- Proteger endpoints evitando accesos no autorizados.
+- Verificar la seguridad del token (firma y expiración).
+- Reducir la carga del servidor al no almacenar sesiones.
+- Integrarse fácilmente con arquitecturas REST.
+
+En resumen, permiten decidir si una petición tiene permisos antes de acceder a la lógica del sistema.
+
+---
+
+### c. Bibliografía (Formato APA)
+
+- Internet Engineering Task Force. (2015). *JSON Web Token (JWT)* (RFC 7519). https://doi.org/10.17487/RFC7519
+
+- Auth0. (2023). *Introduction to JSON Web Tokens*. Recuperado de https://auth0.com/learn/json-web-tokens/
+
+- Oracle. (2023). *Java Platform, Enterprise Edition Security Guide*. Recuperado de https://docs.oracle.com/  
