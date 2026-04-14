@@ -5,6 +5,7 @@ import edu.eci.dosw.tech_cup.dto.auth.LoginRequest;
 import edu.eci.dosw.tech_cup.entity.User;
 import edu.eci.dosw.tech_cup.mapper.UserMapper;
 import edu.eci.dosw.tech_cup.model.enums.Role;
+import edu.eci.dosw.tech_cup.repository.RoleRepository;
 import edu.eci.dosw.tech_cup.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,12 @@ public class AuthService {
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
 
-    public AuthService(UserRepository userRepository, UserMapper userMapper) {
+    public AuthService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.userMapper = userMapper;
     }
 
@@ -49,6 +52,14 @@ public class AuthService {
 
     @PostConstruct
     public void initData() {
+        if (roleRepository.count() == 0) {
+            edu.eci.dosw.tech_cup.entity.Role adminRole = new edu.eci.dosw.tech_cup.entity.Role("ADMIN");
+            edu.eci.dosw.tech_cup.entity.Role playerRole = new edu.eci.dosw.tech_cup.entity.Role("PLAYER");
+            roleRepository.save(adminRole);
+            roleRepository.save(playerRole);
+            log.info("Roles por defecto (ADMIN, PLAYER) creados en BD.");
+        }
+
         if (userRepository.count() == 0) {
             User admin = new User();
             admin.setEmail("admin@mail.escuelaing.edu.co");
