@@ -37,112 +37,52 @@ public class TeamModel {
     }
 
     public boolean addPlayer(UserModel player) {
-        if (player == null)
-            return false;
-        if (players.size() >= 12) {
-            System.out.println("Maximum number of players reached.");
-            return false;
-        }
-        if (player.getTeam() != null) {
-            System.out.println("Player already belongs to another team.");
-            return false;
-        }
+        if (player == null) return false;
+        if (players.size() >= 12) { System.out.println("Maximum number of players reached."); return false; }
+        if (player.getTeam() != null) { System.out.println("Player already belongs to another team."); return false; }
         players.add(player);
         player.joinTeam(this);
         return true;
     }
 
     public boolean removePlayer(UserModel player) {
-        if (players.remove(player)) {
-            player.leaveTeam();
-            return true;
-        }
+        if (players.remove(player)) { player.leaveTeam(); return true; }
         return false;
     }
 
-    public boolean validatePlayerCount() {
-        return players.size() >= 7 && players.size() <= 12;
-    }
+    public boolean validatePlayerCount() { return players.size() >= 7 && players.size() <= 12; }
 
     public void assignCaptain(UserModel captain) {
         this.captain = captain;
-        if (captain != null)
-            captain.setRole(Role.CAPTAIN);
+        if (captain != null) captain.setRole(Role.CAPTAIN);
     }
 
-    public int getPlayerCount() {
-        return players.size();
-    }
+    public int getPlayerCount() { return players.size(); }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getBadgeUrl() { return badgeUrl; }
+    public void setBadgeUrl(String badgeUrl) { this.badgeUrl = badgeUrl; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getUniformColor() { return uniformColor; }
+    public void setUniformColor(String uniformColor) { this.uniformColor = uniformColor; }
 
-    public String getBadgeUrl() {
-        return badgeUrl;
-    }
+    public TeamStatus getStatus() { return status; }
+    public void setStatus(TeamStatus status) { this.status = status; }
 
-    public void setBadgeUrl(String badgeUrl) {
-        this.badgeUrl = badgeUrl;
-    }
+    public UserModel getCaptain() { return captain; }
+    public void setCaptain(UserModel captain) { this.captain = captain; }
 
-    public String getUniformColor() {
-        return uniformColor;
-    }
+    public List<UserModel> getPlayers() { return players; }
+    public void setPlayers(List<UserModel> players) { this.players = players; }
 
-    public void setUniformColor(String uniformColor) {
-        this.uniformColor = uniformColor;
-    }
+    public TournamentModel getTournament() { return tournament; }
+    public void setTournament(TournamentModel tournament) { this.tournament = tournament; }
 
-    public TeamStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TeamStatus status) {
-        this.status = status;
-    }
-
-    public UserModel getCaptain() {
-        return captain;
-    }
-
-    public void setCaptain(UserModel captain) {
-        this.captain = captain;
-    }
-
-    public List<UserModel> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<UserModel> players) {
-        this.players = players;
-    }
-
-    public TournamentModel getTournament() {
-        return tournament;
-    }
-
-    public void setTournament(TournamentModel tournament) {
-        this.tournament = tournament;
-    }
-
-    public PaymentModel getPayment() {
-        return payment;
-    }
-
-    public void setPayment(PaymentModel payment) {
-        this.payment = payment;
-    }
+    public PaymentModel getPayment() { return payment; }
+    public void setPayment(PaymentModel payment) { this.payment = payment; }
 }

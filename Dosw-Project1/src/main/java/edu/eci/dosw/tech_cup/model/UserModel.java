@@ -3,9 +3,6 @@ package edu.eci.dosw.tech_cup.model;
 import edu.eci.dosw.tech_cup.model.enums.ParticipantType;
 import edu.eci.dosw.tech_cup.model.enums.Role;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class UserModel {
 
     private Long id;
@@ -13,7 +10,6 @@ public class UserModel {
     private String email;
     private String password;
     private Role role;
-    private List<RoleModel> roles = new ArrayList<>();
     private ParticipantType participantType;
     private String jerseyNumber;
     private String position;
@@ -76,9 +72,6 @@ public class UserModel {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
-
-    public List<RoleModel> getRoles() { return roles; }
-    public void setRoles(List<RoleModel> roles) { this.roles = roles; }
 
     public ParticipantType getParticipantType() { return participantType; }
     public void setParticipantType(ParticipantType participantType) { this.participantType = participantType; }
