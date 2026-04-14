@@ -11,6 +11,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Dosw-Project1
     steps:
       - name: Checkout codigo
         uses: actions/checkout@v3
@@ -28,6 +31,9 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     needs: build
+    defaults:
+      run:
+        working-directory: Dosw-Project1
     steps:
       - name: Checkout codigo
         uses: actions/checkout@v3
