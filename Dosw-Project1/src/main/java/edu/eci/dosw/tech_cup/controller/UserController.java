@@ -68,15 +68,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
-    @PutMapping("/{id}/role-entity")
-    @Operation(summary = "Asignar rol de tabla", description = "Asigna un rol de la tabla roles al usuario via ManyToMany")
-    public ResponseEntity<UserModel> assignRoleEntity(@PathVariable Long id,
-                                                      @RequestParam Long roleId) {
-        try {
-            return ResponseEntity.ok(userService.assignRoleEntity(id, roleId));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
 }
