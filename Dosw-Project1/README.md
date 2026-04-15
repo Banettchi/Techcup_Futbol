@@ -8,7 +8,6 @@ Web platform for centralized management of the semester football tournament for 
 
 | Member | GitHub | Contact |
 |--------|--------|---------|
-| Juan Angel Salas Gomez | @Juanangels1403 | juan.salas@mail.escuelaing.edu.co |
 | Maria Juliana Rodriguez Caicedo | @JuliRodC | maria.rodriguez@mail.escuelaing.edu.co |
 | Kevyn Daniel Forero Gonzalez | @kevyn1005 | kevyn.forero@mail.escuelaing.edu.co |
 | Diego Alejandro Montes Bonilla | @Banettchi | diego.montes@mail.escuelaing.edu.co |
@@ -169,6 +168,14 @@ Key attributes: unique identifier, receipt URL, registration date, status (Pendi
 | Team → Payment | OneToOne | Each team has exactly one payment |
 
 ---
+
+## Postman
+![postamanteam.png](docs/images/postamanteam.png)
+![Postmannose.png](docs/images/Postmannose.png)
+![Postman1.png](docs/images/Postman1.png)
+![Postman2Fallo.png](docs/images/Postman2Fallo.png)
+![Postman3Token.png](docs/images/Postman3Token.png)
+![Postman4Get.png](docs/images/Postman4Get.png)
 
 ## Testing
 
